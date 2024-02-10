@@ -10,8 +10,9 @@
 Welcome to your new app.
 
 
-<div style="margin-top:55px; text-align:center">
-    <div>
+<div style="margin-top:10px; text-align:center">
+    <h2>@TitleText</h2>
+    <div style="padding-top:10px">
         <p style="visibility: @(_timerVisible ? "visible" : "hidden"); font-size: 75px;">@this._displayTime</p>
         <button class="btn btn-sm btn-primary" disabled=@(!_stopWatchOperation.CanBeStarted || !_timerOperation.CanBeStarted ? true : false)
         @onclick="StartTimer">Start</button>
@@ -23,7 +24,8 @@ Welcome to your new app.
         @onclick="StopTimer">Stop</button>
         <button class="btn btn-sm btn-primary" disabled=@(_stopWatchOperation.IsRecurring || _timerOperation.IsRecurring ? false : true)
         @onclick="LapTime">Lap</button>
-        <button class="btn btn-sm btn_danger" disabled=@(!_stopWatchOperation.IsRecurring && !_timerOperation.IsRecurring ? false : true)
+        <button class="btn btn-sm btn_danger" disabled=@(!_stopWatchOperation.IsRecurring && !_stopWatchOperation.IsPaused 
+                                                            && !_timerOperation.IsRecurring && !_timerOperation.IsPaused ? false : true)
         @onclick="SwapMode">SwapMode</button>
     </div>
     <div style="text-align:center">

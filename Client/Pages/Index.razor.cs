@@ -15,6 +15,8 @@ namespace Flowmodoro.Client.Pages
         bool _timerVisible = true;
         bool _isInStopwatchMode = true;
 
+        public string TitleText = "Stopwatch";
+
         [CascadingParameter(Name = "ErrorComponent")]
         protected IToastComponent ToastComponent { get; set; } = null!;
 
@@ -188,6 +190,7 @@ namespace Flowmodoro.Client.Pages
         void SwapMode()
         {
             this.ToastComponent.ShowInfo($"Swap {_isInStopwatchMode} -> {!_isInStopwatchMode}");
+            this.TitleText = this._isInStopwatchMode ? "Timer" : "Stopwatch";
             this._isInStopwatchMode = !this._isInStopwatchMode;
         }
 
