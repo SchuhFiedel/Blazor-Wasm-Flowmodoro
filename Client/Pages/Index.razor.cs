@@ -6,12 +6,12 @@ namespace Flowmodoro.Client.Pages
 {
     public partial class Index
     {
-        RecurringOperation? _timerOperation;
-        RecurringOperation? _blinkerOperation;
-        RecurringOperation? _stopWatchOperation;
+        public RecurringOperation? TimerOpertation { get; private set;  }
+        public RecurringOperation? BlinkerOperation { get; private set; }
+        public RecurringOperation? StopWatchOperation { get; private set; }
         TimeSpan _displayTime = default;
         List<TimeSpan>? _laptimes;
-        int _elapsedSeconds;
+        public int Seconds { get; private set; }
         bool _timerVisible = true;
         bool _isInStopwatchMode = true;
 
@@ -22,35 +22,34 @@ namespace Flowmodoro.Client.Pages
 
         protected override void OnInitialized()
         {
-            _stopWatchOperation = new("stopwatch");
-            _stopWatchOperation.Operation = IncrementTimer;
-            _stopWatchOperation.StatusChanged += StopWatchOperationStatusChanged;
-            _stopWatchOperation.OperationFaulted += LogError;
+            StopWatchOperation = new("stopwatch");
+            StopWatchOperation.Operation = IncrementTimer;
+            StopWatchOperation.StatusChanged += StopWatchOperationStatusChanged;
+            StopWatchOperation.OperationFaulted += LogError;
 
-            _timerOperation = new("timer");
-            _timerOperation.Operation = DecrementTimer;
-            _timerOperation.StatusChanged += TimerOperationStatusChanged;
-            _timerOperation.OperationFaulted += LogError;
+            TimerOpertation = new("timer");
+            TimerOpertation.Operation = DecrementTimer;
+            TimerOpertation.StatusChanged += TimerOperationStatusChanged;
+            TimerOpertation.OperationFaulted += LogError;
 
-            _blinkerOperation = new("blinker");
-            _blinkerOperation.Operation = BlinkTimer;
-            _blinkerOperation.StatusChanged += BlinkerOperationStatusChanged;
+            BlinkerOperation = new("blinker");
+            BlinkerOperation.Operation = BlinkTimer;
+            BlinkerOperation.StatusChanged += BlinkerOperationStatusChanged;
 
             _laptimes = new();
         }
 
         void StartTimer()
         {
-            Recurop.CancelRecurring(_blinkerOperation);
+            Recurop.CancelRecurring(BlinkerOperation);
             if (_isInStopwatchMode)
             {
-                _elapsedSeconds = 0;
-                _displayTime = TimeSpan.Zero;
-                Recurop.StartRecurring(_stopWatchOperation, TimeSpan.FromSeconds(1));
+                ResetTimer();
+                Recurop.StartRecurring(StopWatchOperation, TimeSpan.FromSeconds(1));
             }
             else
             {
-                Recurop.StartRecurring(_timerOperation, TimeSpan.FromSeconds(1));
+                Recurop.StartRecurring(TimerOpertation, TimeSpan.FromSeconds(1));
             }
         }
 
@@ -58,47 +57,47 @@ namespace Flowmodoro.Client.Pages
         {
             if (_isInStopwatchMode)
             {
-                Recurop.PauseRecurring(_stopWatchOperation);
+                Recurop.PauseRecurring(StopWatchOperation);
             }
             else
             {
-                Recurop.PauseRecurring(_timerOperation);
+                Recurop.PauseRecurring(TimerOpertation);
             }
 
-            Recurop.StartRecurring(_blinkerOperation, TimeSpan.FromSeconds(0.5));
+            Recurop.StartRecurring(BlinkerOperation, TimeSpan.FromSeconds(0.5));
         }
 
         void ResumeTimer()
         {
             if (_isInStopwatchMode)
             {
-                Recurop.ResumeRecurring(_stopWatchOperation);
+                Recurop.ResumeRecurring(StopWatchOperation);
             }
             else 
             { 
-                Recurop.ResumeRecurring(_timerOperation);
+                Recurop.ResumeRecurring(TimerOpertation);
             }
 
-            Recurop.CancelRecurring(_blinkerOperation);
+            Recurop.CancelRecurring(BlinkerOperation);
         }
 
         void StopTimer()
         {
-            Recurop.CancelRecurring(_blinkerOperation);
+            Recurop.CancelRecurring(BlinkerOperation);
             if (_isInStopwatchMode)
             {
-                Recurop.CancelRecurring(_stopWatchOperation);
+                Recurop.CancelRecurring(StopWatchOperation);
             }
             else
             {
-                Recurop.CancelRecurring(_timerOperation);
+                Recurop.CancelRecurring(TimerOpertation);
             }
         }
 
         void IncrementTimer()
         {
-            _elapsedSeconds++;
-            _displayTime = TimeSpan.FromSeconds(_elapsedSeconds);
+            Seconds++;
+            _displayTime = TimeSpan.FromSeconds(Seconds);
             StateHasChanged();
         }
 
@@ -106,17 +105,24 @@ namespace Flowmodoro.Client.Pages
         {
             //Decrement until zero
             //if zero Stop Timer and start to play sound -> Play Sound Operation and Blink Operation
-            if (_elapsedSeconds > 0)
+            if (Seconds > 0)
             {
                 
-                _elapsedSeconds--;
-                _displayTime = TimeSpan.FromSeconds(_elapsedSeconds);
+                Seconds--;
+                _displayTime = TimeSpan.FromSeconds(Seconds);
             }
             else
             {
                 StopTimer();
-                Recurop.StartRecurring(_blinkerOperation, TimeSpan.FromSeconds(0.5));
+                Recurop.StartRecurring(BlinkerOperation, TimeSpan.FromSeconds(0.5));
             }
+            StateHasChanged();
+        }
+
+        void ResetTimer()
+        {
+            Seconds = 0;
+            _displayTime = TimeSpan.Zero;
             StateHasChanged();
         }
 
@@ -133,7 +139,7 @@ namespace Flowmodoro.Client.Pages
 
         void BlinkerOperationStatusChanged()
         {
-            switch (_blinkerOperation?.Status)
+            switch (BlinkerOperation?.Status)
             {
                 case RecurringOperationStatus.Idle:
                 case RecurringOperationStatus.Paused:
@@ -149,7 +155,7 @@ namespace Flowmodoro.Client.Pages
 
         void StopWatchOperationStatusChanged()
         {
-            switch (_stopWatchOperation?.Status)
+            switch (StopWatchOperation?.Status)
             {
                 case RecurringOperationStatus.Idle:
                 case RecurringOperationStatus.Paused:
@@ -165,7 +171,7 @@ namespace Flowmodoro.Client.Pages
 
         void TimerOperationStatusChanged()
         {
-            switch (_timerOperation?.Status)
+            switch (TimerOpertation?.Status)
             {
                 case RecurringOperationStatus.Idle:
                 case RecurringOperationStatus.Paused:
@@ -181,7 +187,8 @@ namespace Flowmodoro.Client.Pages
 
         void onTimerStop()
         {
-            this.ToastComponent.ShowSuccess("Timer Stopped!", _displayTime.ToString());
+            this.ToastComponent.ShowSuccess($"{TitleText} Stopped!", _displayTime.ToString());
+
             //_displayTime = TimeSpan.Zero;
             //_elapsedSeconds = 0;
             _laptimes?.Clear();
@@ -189,8 +196,9 @@ namespace Flowmodoro.Client.Pages
 
         void SwapMode()
         {
-            this.ToastComponent.ShowInfo($"Swap {_isInStopwatchMode} -> {!_isInStopwatchMode}");
+            string prevText = this.TitleText;
             this.TitleText = this._isInStopwatchMode ? "Timer" : "Stopwatch";
+            this.ToastComponent.ShowInfo($"Swap {prevText} -> {TitleText}");
             this._isInStopwatchMode = !this._isInStopwatchMode;
         }
 
@@ -198,8 +206,8 @@ namespace Flowmodoro.Client.Pages
 
         public void Dispose()
         {
-            Recurop.CancelRecurring(_stopWatchOperation);
-            Recurop.CancelRecurring(_blinkerOperation);
+            Recurop.CancelRecurring(StopWatchOperation);
+            Recurop.CancelRecurring(BlinkerOperation);
         }
         void LogError(Exception ex)
         {

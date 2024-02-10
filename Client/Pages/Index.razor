@@ -14,25 +14,14 @@ Welcome to your new app.
     <h2>@TitleText</h2>
     <div style="padding-top:10px">
         <p style="visibility: @(_timerVisible ? "visible" : "hidden"); font-size: 75px;">@this._displayTime</p>
-        <button class="btn btn-sm btn-primary" disabled=@(!_stopWatchOperation.CanBeStarted || !_timerOperation.CanBeStarted ? true : false)
+        <button class="btn btn-sm btn-primary" disabled=@(!StopWatchOperation.CanBeStarted || !TimerOpertation.CanBeStarted ? true : false)
         @onclick="StartTimer">Start</button>
-        <button class="btn btn-sm btn-primary" disabled=@(_stopWatchOperation.IsRecurring || _timerOperation.IsRecurring ? false : true)
-        @onclick="PauseTimer">Pause</button>
-        <button class="btn btn-sm btn-primary" disabled=@(_stopWatchOperation.IsPaused || _timerOperation.IsPaused? false : true)
-        @onclick="ResumeTimer">Resume</button>
-        <button class="btn btn-sm btn-danger" disabled=@(_stopWatchOperation.IsRecurring || _timerOperation.IsRecurring ? false : true)
+        <button class="btn btn-sm btn-danger" disabled=@(StopWatchOperation.IsRecurring || TimerOpertation.IsRecurring ? false : true)
         @onclick="StopTimer">Stop</button>
-        <button class="btn btn-sm btn-primary" disabled=@(_stopWatchOperation.IsRecurring || _timerOperation.IsRecurring ? false : true)
-        @onclick="LapTime">Lap</button>
-        <button class="btn btn-sm btn_danger" disabled=@(!_stopWatchOperation.IsRecurring && !_stopWatchOperation.IsPaused 
-                                                            && !_timerOperation.IsRecurring && !_timerOperation.IsPaused ? false : true)
+        <button class="btn btn-sm btn-danger" disabled=@(StopWatchOperation.IsRecurring || TimerOpertation.IsRecurring ? true : false)
+        @onclick="ResetTimer">Reset</button>
+        <button class="btn btn-sm btn_danger" disabled=@(!StopWatchOperation.IsRecurring && !StopWatchOperation.IsPaused 
+                                                            && !TimerOpertation.IsRecurring && !TimerOpertation.IsPaused ? false : true)
         @onclick="SwapMode">SwapMode</button>
-    </div>
-    <div style="text-align:center">
-        <p style="font-size: 55px; margin-top:25px">Lap times</p>
-        @foreach (var laptime in _laptimes)
-        {
-            <p style="font-size:25px">@(laptime + "\n")</p>
-        }
     </div>
 </div>
