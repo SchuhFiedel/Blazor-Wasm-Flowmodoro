@@ -6,6 +6,9 @@ namespace Flowmodoro.Client.Pages
 {
     public partial class Index
     {
+        const string StopWatchText = "Work Mode";
+        const string TimerText = "Break Mode";
+
         public RecurringOperation? TimerOpertation { get; private set;  }
         public RecurringOperation? BlinkerOperation { get; private set; }
         public RecurringOperation? StopWatchOperation { get; private set; }
@@ -15,7 +18,7 @@ namespace Flowmodoro.Client.Pages
         bool _timerVisible = true;
         bool _isInStopwatchMode = true;
 
-        public string TitleText = "Stopwatch";
+        public string TitleText = StopWatchText;
 
         [CascadingParameter(Name = "ErrorComponent")]
         protected IToastComponent ToastComponent { get; set; } = null!;
@@ -51,34 +54,6 @@ namespace Flowmodoro.Client.Pages
             {
                 Recurop.StartRecurring(TimerOpertation, TimeSpan.FromSeconds(1));
             }
-        }
-
-        void PauseTimer()
-        {
-            if (_isInStopwatchMode)
-            {
-                Recurop.PauseRecurring(StopWatchOperation);
-            }
-            else
-            {
-                Recurop.PauseRecurring(TimerOpertation);
-            }
-
-            Recurop.StartRecurring(BlinkerOperation, TimeSpan.FromSeconds(0.5));
-        }
-
-        void ResumeTimer()
-        {
-            if (_isInStopwatchMode)
-            {
-                Recurop.ResumeRecurring(StopWatchOperation);
-            }
-            else 
-            { 
-                Recurop.ResumeRecurring(TimerOpertation);
-            }
-
-            Recurop.CancelRecurring(BlinkerOperation);
         }
 
         void StopTimer()
@@ -123,6 +98,9 @@ namespace Flowmodoro.Client.Pages
         {
             Seconds = 0;
             _displayTime = TimeSpan.Zero;
+            Recurop.CancelRecurring(BlinkerOperation);
+            Recurop.CancelRecurring(StopWatchOperation);
+            Recurop.CancelRecurring(TimerOpertation);
             StateHasChanged();
         }
 
@@ -197,9 +175,30 @@ namespace Flowmodoro.Client.Pages
         void SwapMode()
         {
             string prevText = this.TitleText;
-            this.TitleText = this._isInStopwatchMode ? "Timer" : "Stopwatch";
+            if (_isInStopwatchMode)
+            {
+                Seconds = this.Seconds / 5;
+                _displayTime = TimeSpan.FromSeconds(Seconds);
+                this.TitleText = $"{TimerText} {_displayTime}";
+            }
+            else
+            {
+                this.TitleText = StopWatchText;
+            }
+
             this.ToastComponent.ShowInfo($"Swap {prevText} -> {TitleText}");
             this._isInStopwatchMode = !this._isInStopwatchMode;
+        }
+
+        bool CanBeSwapped()
+        {
+            bool isRunning = StopWatchOperation.IsRecurring && TimerOpertation.IsRecurring;
+            Console.WriteLine(!isRunning && _isInStopwatchMode);
+            if ((!isRunning && _isInStopwatchMode) || (!isRunning && !_isInStopwatchMode && this.Seconds == 0))
+                return true;
+
+            return false;
+
         }
 
         #region poo
