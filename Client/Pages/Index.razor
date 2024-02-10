@@ -1,4 +1,7 @@
 ﻿@page "/"
+@using Recurop
+@inject RecurringOperationsManager Recurop
+@implements IDisposable
 
 <PageTitle>Index</PageTitle>
 
@@ -6,4 +9,19 @@
 
 Welcome to your new app.
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+
+<div style="margin-top:10px; text-align:center">
+    <h2>@TitleText</h2>
+    <div style="padding-top:10px">
+        <p style="visibility: @(_timerVisible ? "visible" : "hidden"); font-size: 75px;">@this._displayTime</p>
+        <button class="btn btn-sm btn-primary" disabled=@(!StopWatchOperation.CanBeStarted || !TimerOpertation.CanBeStarted ? true : false)
+        @onclick="StartTimer">Start</button>
+        <button class="btn btn-sm btn-danger" disabled=@(StopWatchOperation.IsRecurring || TimerOpertation.IsRecurring ? false : true)
+        @onclick="StopTimer">Stop</button>
+        <button class="btn btn-sm btn-danger" disabled=@(StopWatchOperation.IsRecurring || TimerOpertation.IsRecurring ? true : false)
+        @onclick="ResetTimer">Reset</button>
+        <button class="btn btn-sm btn_danger" disabled=@(!StopWatchOperation.IsRecurring && !StopWatchOperation.IsPaused 
+                                                            && !TimerOpertation.IsRecurring && !TimerOpertation.IsPaused ? false : true)
+        @onclick="SwapMode">SwapMode</button>
+    </div>
+</div>
