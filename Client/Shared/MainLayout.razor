@@ -1,17 +1,61 @@
-﻿@inherits LayoutComponentBase
+﻿@inherits LayoutComponentBase;
+@implements IToastComponent;
+@inject ISnackbar SnackbarService;
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+<MudThemeProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-        </div>
-
-        <article class="content px-4">
+<MudLayout>
+    <NavMenu/>
+    <MudMainContent >    
+        <CascadingValue Value="this" Name="ErrorComponent">
             @Body
-        </article>
-    </main>
-</div>
+        </CascadingValue>
+    </MudMainContent>
+</MudLayout>
+
+@code{
+
+    public void ShowError(string title, string message = "")
+    {
+        Console.WriteLine($"{title},{message}");
+        this.ShowToast(title, message, MudBlazor.Severity.Error);
+    }
+
+    public void ShowWarning(string title, string message = "")
+    {
+        this.ShowToast(title, message, MudBlazor.Severity.Warning);
+    }
+
+    public void ShowSuccess(string title, string message = "")
+    {
+        this.ShowToast(title, message, MudBlazor.Severity.Success);
+    }
+
+    public void ShowInfo(string title, string message = "")
+    {
+        this.ShowToast(title, message, MudBlazor.Severity.Info);
+    }
+
+    public void ShowToast(string title, string message, MudBlazor.Severity severity)
+    {
+        RenderFragment toastRenderFragment = GetToastRenderFragment(title, message);
+        this.SnackbarService.Add(toastRenderFragment, severity);
+    }
+
+    private RenderFragment GetToastRenderFragment(string title, string message)
+    {
+        RenderFragment toastRenderFragment = new RenderFragment(
+        @<div class="toast-div">
+            <h5 class="toast-title">@title</h5>
+            @if (!String.IsNullOrEmpty(message))
+             {
+                 <p class="toast-message">@message</p>
+             }
+            </div>
+        );
+        return toastRenderFragment;
+    }
+}
+

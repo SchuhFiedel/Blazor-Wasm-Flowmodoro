@@ -1,6 +1,9 @@
+using Blazored.LocalStorage;
 using Flowmodoro.Client;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using MudBlazor;
+using MudBlazor.Services;
 
 namespace Flowmodoro.Client
 {
@@ -14,7 +17,24 @@ namespace Flowmodoro.Client
 
 			builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
-			await builder.Build().RunAsync();
+            builder.Services.AddMudServices();
+            builder.Services.AddBlazoredLocalStorage();
+
+            builder.Services.AddMudServices(config =>
+            {
+                config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomCenter;
+
+                config.SnackbarConfiguration.PreventDuplicates = true;
+                config.SnackbarConfiguration.NewestOnTop = false;
+                config.SnackbarConfiguration.ShowCloseIcon = true;
+                config.SnackbarConfiguration.VisibleStateDuration = 15000;
+                config.SnackbarConfiguration.HideTransitionDuration = 500;
+                config.SnackbarConfiguration.ShowTransitionDuration = 500;
+                config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
+                config.SnackbarConfiguration.MaxDisplayedSnackbars = 10;
+            });
+
+            await builder.Build().RunAsync();
 		}
 	}
 }
