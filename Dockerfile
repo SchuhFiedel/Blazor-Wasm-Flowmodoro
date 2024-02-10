@@ -9,7 +9,7 @@ FROM mcr.microsoft.com/dotnet/sdk:6.0-bookworm-slim-arm64v8 AS build
 WORKDIR /src
 COPY ["Server/Flowmodoro.Server.csproj", "Server/"]
 COPY ["Client/Flowmodoro.Client.csproj", "Client/"]
-COPY ["Shared/Flowmodoro.Shared.Models.csproj", "Shared/"]
+COPY ["Shared/Flowmodoro.Shared.csproj", "Shared/"]
 #COPY ["CTrack.Server.Contracts/CTrack.Server.Shared.Contracts.csproj", "CTrack.Server.Contracts/"]
 #COPY ["CTrack.Server.Services/CTrack.Server.Services.csproj", "CTrack.Server.Services/"]
 #COPY ["CTrack.Server.Shared/CTrack.Server.Shared.csproj", "CTrack.Server.Shared/"]
