@@ -1,4 +1,7 @@
 ﻿@page "/"
+@using Recurop
+@inject RecurringOperationsManager Recurop
+@implements IDisposable
 
 <PageTitle>Index</PageTitle>
 
@@ -7,3 +10,27 @@
 Welcome to your new app.
 
 
+<div style="margin-top:55px; text-align:center">
+    <div>
+        <p style="visibility: @(_timerVisible ? "visible" : "hidden"); font-size: 75px;">@this._displayTime</p>
+        <button class="btn btn-sm btn-primary" disabled=@(!_stopWatchOperation.CanBeStarted || !_timerOperation.CanBeStarted ? true : false)
+        @onclick="StartTimer">Start</button>
+        <button class="btn btn-sm btn-primary" disabled=@(_stopWatchOperation.IsRecurring || _timerOperation.IsRecurring ? false : true)
+        @onclick="PauseTimer">Pause</button>
+        <button class="btn btn-sm btn-primary" disabled=@(_stopWatchOperation.IsPaused || _timerOperation.IsPaused? false : true)
+        @onclick="ResumeTimer">Resume</button>
+        <button class="btn btn-sm btn-danger" disabled=@(_stopWatchOperation.IsRecurring || _timerOperation.IsRecurring ? false : true)
+        @onclick="StopTimer">Stop</button>
+        <button class="btn btn-sm btn-primary" disabled=@(_stopWatchOperation.IsRecurring || _timerOperation.IsRecurring ? false : true)
+        @onclick="LapTime">Lap</button>
+        <button class="btn btn-sm btn_danger" disabled=@(!_stopWatchOperation.IsRecurring && !_timerOperation.IsRecurring ? false : true)
+        @onclick="SwapMode">SwapMode</button>
+    </div>
+    <div style="text-align:center">
+        <p style="font-size: 55px; margin-top:25px">Lap times</p>
+        @foreach (var laptime in _laptimes)
+        {
+            <p style="font-size:25px">@(laptime + "\n")</p>
+        }
+    </div>
+</div>
