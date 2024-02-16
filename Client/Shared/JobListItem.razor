@@ -1,0 +1,19 @@
+﻿
+
+<li draggable="true" style="list-style-type:none; height:30px"
+@key="item.Id" tabindex="1"
+@ondrop="@(()=> OnDrop.InvokeAsync(item))"
+@ondrag="@(()=> OnStartDrag.InvokeAsync(item))">
+    <span>@item.Description</span> <small>@item.Id</small>
+</li>
+
+
+@code{
+
+    [Parameter]
+    public JobModel item { get; set; }
+    [Parameter]
+    public EventCallback<JobModel> OnStartDrag { get; set; }
+    [Parameter]
+    public EventCallback<JobModel> OnDrop { get; set; }
+}
