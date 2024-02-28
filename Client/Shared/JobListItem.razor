@@ -1,0 +1,47 @@
+﻿
+
+<li draggable="true"
+@key="item.Id" tabindex="1"
+@ondrop="@(()=> OnDrop.InvokeAsync(item))"
+@ondrag="@(()=> OnStartDrag.InvokeAsync(item))">
+    <div class="task-container">
+        <div class="task-formatter rounded container">
+            <div class="row">
+                <h6 class="task-name col-sm my-1">@item.Name</h6>
+                <span class=" col-sm-4 col-xl-3 text-end my-1">
+                    @item.TimeWorkedOnTask
+                    <MudIconButton Icon="@Icons.Material.Sharp.AccessTime" Size="Size.Small" Variant="Variant.Outlined" 
+                    Color="Color.Info" aria-label="track" OnClick="@(() => OnTrackingClick.InvokeAsync(item))"></MudIconButton>
+                </span>
+
+            </div>
+
+            <div class="row">
+                <span class="task-description col-sm my-1">@item.Description</span>
+                <span class=" col-sm-4 col-xl-3 text-end my-1">
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Warning"
+                                   aria-label="delete" OnClick="@(() => OnDeleteClick.InvokeAsync(item))"></MudIconButton>
+                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Tertiary"
+                                   aria-label="edit" OnClick="@(() => OnEditClick.InvokeAsync(item))"></MudIconButton>
+                </span>
+                 </div>
+        </div>
+    </div>
+</li>
+
+
+@code{
+
+    [Parameter]
+    public JobModel item { get; set; }
+    [Parameter]
+    public EventCallback<JobModel> OnStartDrag { get; set; }
+    [Parameter]
+    public EventCallback<JobModel> OnDrop { get; set; }
+    [Parameter]
+    public EventCallback<JobModel> OnDeleteClick { get; set; }
+    [Parameter]
+    public EventCallback<JobModel> OnEditClick { get; set; }
+    [Parameter]
+    public EventCallback<JobModel> OnTrackingClick { get; set; }
+}

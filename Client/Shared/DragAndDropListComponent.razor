@@ -1,0 +1,106 @@
+﻿@using Flowmodoro.Client.Models;
+
+<!-- https://stackoverflow.com/questions/59302823/blazor-re-ordering-a-list-with-drag-and-drop -->
+
+<div class="drag-drop-container">
+    <h3>DragAndDropListComponent</h3>
+    <MudButton Variant="Variant.Filled" Color="Color.Info" @onclick="AddJob">
+        <MudText>Add Task</MudText>
+    </MudButton>
+    <ul ondragover="event.preventDefault();">
+        @foreach (var item in Jobs)
+        {
+            if (item != null)     //Change @ondrop to @ondragover to update UI in real time
+            {
+                <JobListItem item="item" 
+                    OnDrop="DropHandler" 
+                    OnStartDrag="StartDragHandler" 
+                    OnDeleteClick="DeleteClickHandler"
+                    OnTrackingClick="TrackingClickHandler"
+                    OnEditClick="EditClickHandler"
+                    ></JobListItem>
+            }
+            else
+            {
+                <li>No Items - Click Here To Create New Ones</li>
+            }
+        }
+    </ul>
+</div>
+@*<button @onclick="ReportList">List</button>*@
+@code
+{
+
+    int startDragIndex;
+
+    List<JobModel> Jobs = new List<JobModel> {
+        new JobModel() { Id = Guid.NewGuid(), Name="Test1", Description="_ RRE EEieieie iaoiaoai pp pp poeuraru iaosudosiud aosifaoisfjas aslkfjalksfj alkjjskja akasljdaksf_", LastUpdated = DateTime.Now, Status = JobStatuses.Todo},
+        new JobModel() { Id = Guid.NewGuid(), Name="Test3", Description="_Three_", LastUpdated = DateTime.Now, Status = JobStatuses.Todo},
+        new JobModel() { Id = Guid.NewGuid(), Name="Test4", Description="_Four_", LastUpdated = DateTime.Now, Status = JobStatuses.Todo},
+        new JobModel() { Id = Guid.NewGuid(), Name="Test5", Description="_Five_", LastUpdated = DateTime.Now, Status = JobStatuses.Todo},
+        new JobModel() { Id = Guid.NewGuid(), Name="Test6", Description="_Six_", LastUpdated = DateTime.Now, Status = JobStatuses.Todo},
+        new JobModel() { Id = Guid.NewGuid(), Name="Test7", Description="_Seven_", LastUpdated = DateTime.Now, Status = JobStatuses.Todo},
+        new JobModel() { Id = Guid.NewGuid(), Name="Test8", Description="_Eight_", LastUpdated = DateTime.Now, Status = JobStatuses.Todo},
+        new JobModel() { Id = Guid.NewGuid(), Name="Test2", Description="_Two_", LastUpdated = DateTime.Now, Status = JobStatuses.Todo},
+    };
+
+    void StartDragHandler(JobModel item)
+    {
+        startDragIndex = GetIndex(item);
+        Console.WriteLine($"DragStart for {item.Id} index {startDragIndex}");
+    }
+
+    void DropHandler(JobModel itemAtDropPosition)
+    {
+        if (itemAtDropPosition != null)
+        {
+            Console.WriteLine($"Drop item {itemAtDropPosition.Description} ({itemAtDropPosition.Id})");
+
+            var dropIndex = GetIndex(itemAtDropPosition);
+
+            Console.WriteLine($"Drop index is {dropIndex}, move from {startDragIndex}");
+
+            // get dragged item
+            var draggedItem = Jobs[startDragIndex];
+            // remove dragged item from dragStart index
+            Jobs.RemoveAt(startDragIndex);
+            // insert dragged item at dropIndex
+            Jobs.Insert(dropIndex, draggedItem);
+
+            // update current selection
+            startDragIndex = dropIndex;
+
+            StateHasChanged();
+        }
+        else
+        {
+            Console.WriteLine("Drop - null");
+        }
+    }
+
+    int GetIndex(JobModel item)
+    {
+        return Jobs.FindIndex(a => a.Id == item.Id);
+    }
+
+    void AddJob()
+    {
+        int number = Jobs.Count + 1;
+        Jobs.Add(new JobModel() { Id = Guid.NewGuid(), Name = $"Test{number}", Description = $"_{number}_", LastUpdated = DateTime.Now, Status = JobStatuses.Todo });
+    }       
+
+    void DeleteClickHandler(JobModel item)
+    {
+        Console.WriteLine($"DeleteHandler {item.Name}");
+    }
+    void EditClickHandler(JobModel item)
+    {
+        Console.WriteLine($"ClickHandler {item.Name}");
+
+    }
+    void TrackingClickHandler(JobModel item)
+    {
+        Console.WriteLine($"TrackingHandler {item.Name}");
+    }
+}
+}
