@@ -41,6 +41,12 @@
                     </button>
                 </div>
             </div>
+                    @if (BlinkerOperation?.Status == RecurringOperationStatus.Executing)
+            {
+            <div>
+                <audio autoplay loop><source src="/Assets/Audio/30-seconds-alarm.mp3" /></audio>
+            </div>
+            }
         </div>
     </MudItem>
     <MudItem md="6" xs="12">
