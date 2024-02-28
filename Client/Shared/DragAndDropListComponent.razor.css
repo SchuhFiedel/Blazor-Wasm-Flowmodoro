@@ -1,4 +1,9 @@
-﻿
-.myContainer {
-    background-color: red !important;
+﻿ul{
+    list-style: none;
+}
+
+.drag-drop-container {
+    margin: auto;
+    padding: 3em;
+    max-width: 50em;
 }

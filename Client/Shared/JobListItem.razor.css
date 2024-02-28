@@ -1,0 +1,24 @@
+﻿
+.task-container {
+    padding-top: 0.5em;
+}
+
+.task-formatter {
+    background-color: var(--mud-palette-primary);
+    color:white;
+    padding-right: 0.5em;
+    padding-left: 0.5em;
+    padding-bottom: 0.2em;
+    padding-top: 0.2em;
+}
+
+div.task-formatter:hover {
+    background-color: var(--mud-palette-primary-darken);
+    box-shadow: grey 4px 4px;
+    cursor: grab;
+}
+
+li {
+    margin: 0;
+    padding: 0;
+}

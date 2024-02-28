@@ -2,22 +2,31 @@
 
 <!-- https://stackoverflow.com/questions/59302823/blazor-re-ordering-a-list-with-drag-and-drop -->
 
-<h3>DragAndDropListComponent</h3>
-
-<ul ondragover="event.preventDefault();" style="margin:20px">
-    @foreach (var item in Jobs)
-    {
-        if (item != null)     //Change @ondrop to @ondragover to update UI in real time
+<div class="drag-drop-container">
+    <h3>DragAndDropListComponent</h3>
+    <MudButton Variant="Variant.Filled" Color="Color.Info" @onclick="AddJob">
+        <MudText>Add Task</MudText>
+    </MudButton>
+    <ul ondragover="event.preventDefault();">
+        @foreach (var item in Jobs)
         {
-            <JobListItem item="item" OnDrop="Drop" OnStartDrag="StartDrag"></JobListItem>
+            if (item != null)     //Change @ondrop to @ondragover to update UI in real time
+            {
+                <JobListItem item="item" 
+                    OnDrop="DropHandler" 
+                    OnStartDrag="StartDragHandler" 
+                    OnDeleteClick="DeleteClickHandler"
+                    OnTrackingClick="TrackingClickHandler"
+                    OnEditClick="EditClickHandler"
+                    ></JobListItem>
+            }
+            else
+            {
+                <li>No Items - Click Here To Create New Ones</li>
+            }
         }
-        else
-        {
-            <li>No Items - Click Here To Create New Ones</li>
-        }
-    }
-</ul>
-
+    </ul>
+</div>
 @*<button @onclick="ReportList">List</button>*@
 @code
 {
@@ -25,28 +34,23 @@
     int startDragIndex;
 
     List<JobModel> Jobs = new List<JobModel> {
-        new JobModel() { Id = Guid.NewGuid(), Description= "Test1", LastUpdated = DateTime.Now, Status = JobStatuses.Todo},
-        new JobModel() { Id = Guid.NewGuid(), Description= "Test2", LastUpdated = DateTime.Now, Status = JobStatuses.Todo},
-        new JobModel() { Id = Guid.NewGuid(), Description= "Test3", LastUpdated = DateTime.Now, Status = JobStatuses.Todo},
-        new JobModel() { Id = Guid.NewGuid(), Description= "Test4", LastUpdated = DateTime.Now, Status = JobStatuses.Todo},
-        new JobModel() { Id = Guid.NewGuid(), Description= "Test5", LastUpdated = DateTime.Now, Status = JobStatuses.Todo},
-        new JobModel() { Id = Guid.NewGuid(), Description= "Test6", LastUpdated = DateTime.Now, Status = JobStatuses.Todo},
-        new JobModel() { Id = Guid.NewGuid(), Description= "Test7", LastUpdated = DateTime.Now, Status = JobStatuses.Todo},
-        new JobModel() { Id = Guid.NewGuid(), Description= "Test8", LastUpdated = DateTime.Now, Status = JobStatuses.Todo},
+        new JobModel() { Id = Guid.NewGuid(), Name="Test1", Description="_ RRE EEieieie iaoiaoai pp pp poeuraru iaosudosiud aosifaoisfjas aslkfjalksfj alkjjskja akasljdaksf_", LastUpdated = DateTime.Now, Status = JobStatuses.Todo},
+        new JobModel() { Id = Guid.NewGuid(), Name="Test3", Description="_Three_", LastUpdated = DateTime.Now, Status = JobStatuses.Todo},
+        new JobModel() { Id = Guid.NewGuid(), Name="Test4", Description="_Four_", LastUpdated = DateTime.Now, Status = JobStatuses.Todo},
+        new JobModel() { Id = Guid.NewGuid(), Name="Test5", Description="_Five_", LastUpdated = DateTime.Now, Status = JobStatuses.Todo},
+        new JobModel() { Id = Guid.NewGuid(), Name="Test6", Description="_Six_", LastUpdated = DateTime.Now, Status = JobStatuses.Todo},
+        new JobModel() { Id = Guid.NewGuid(), Name="Test7", Description="_Seven_", LastUpdated = DateTime.Now, Status = JobStatuses.Todo},
+        new JobModel() { Id = Guid.NewGuid(), Name="Test8", Description="_Eight_", LastUpdated = DateTime.Now, Status = JobStatuses.Todo},
+        new JobModel() { Id = Guid.NewGuid(), Name="Test2", Description="_Two_", LastUpdated = DateTime.Now, Status = JobStatuses.Todo},
     };
 
-    void StartDrag(JobModel item)
+    void StartDragHandler(JobModel item)
     {
         startDragIndex = GetIndex(item);
         Console.WriteLine($"DragStart for {item.Id} index {startDragIndex}");
     }
 
-    int GetIndex(JobModel item)
-    {
-        return Jobs.FindIndex(a => a.Id == item.Id);
-    }
-
-    void Drop(JobModel itemAtDropPosition)
+    void DropHandler(JobModel itemAtDropPosition)
     {
         if (itemAtDropPosition != null)
         {
@@ -74,14 +78,29 @@
         }
     }
 
-    void ReportList()
+    int GetIndex(JobModel item)
     {
-        int i = 0;
-        foreach (var item in Jobs)
-        {
-            Console.WriteLine($"{i++}: {item.Id} = {item.Description}");
-        }
+        return Jobs.FindIndex(a => a.Id == item.Id);
     }
 
-    
+    void AddJob()
+    {
+        int number = Jobs.Count + 1;
+        Jobs.Add(new JobModel() { Id = Guid.NewGuid(), Name = $"Test{number}", Description = $"_{number}_", LastUpdated = DateTime.Now, Status = JobStatuses.Todo });
+    }       
+
+    void DeleteClickHandler(JobModel item)
+    {
+        Console.WriteLine($"DeleteHandler {item.Name}");
+    }
+    void EditClickHandler(JobModel item)
+    {
+        Console.WriteLine($"ClickHandler {item.Name}");
+
+    }
+    void TrackingClickHandler(JobModel item)
+    {
+        Console.WriteLine($"TrackingHandler {item.Name}");
+    }
+}
 }
