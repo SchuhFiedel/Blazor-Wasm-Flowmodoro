@@ -31,5 +31,13 @@
             <button class="btn btn-sm btn_danger" disabled=@(!CanBeSwapped())
             @onclick="SwapMode">SwapMode</button>
         </div>
+
+        @if (BlinkerOperation?.Status == RecurringOperationStatus.Executing)
+        {
+            <div>
+                <audio autoplay loop><source src="/Assets/Audio/30-seconds-alarm.mp3" /></audio>
+            </div>
+        }
+
     </div>
 </div>
