@@ -2,16 +2,16 @@
 
 <li draggable="true"
 @key="item.Id" tabindex="1"
-@ondrop="@(()=> OnDrop.InvokeAsync(item))"
-@ondrag="@(()=> OnStartDrag.InvokeAsync(item))">
+@ondrop="@(()=> OnDrop.InvokeAsync(item.Id))"
+@ondrag="@(()=> OnStartDrag.InvokeAsync(item.Id))">
     <div class="task-container">
-        <div class="task-formatter rounded container">
+        <div class="task-formatter rounded container @(isSelected ? "task-selected" : "")">
             <div class="row">
                 <h6 class="task-name col-sm my-1">@item.Name</h6>
                 <span class=" col-sm-4 col-xl-3 text-end my-1">
                     @item.TimeWorkedOnTask
-                    <MudIconButton Icon="@Icons.Material.Sharp.AccessTime" Size="Size.Small" Variant="Variant.Outlined" 
-                    Color="Color.Info" aria-label="track" OnClick="@(() => OnTrackingClick.InvokeAsync(item))"></MudIconButton>
+                    <MudIconButton Icon="@Icons.Material.Sharp.AccessTime" Size="Size.Small" Variant="Variant.Outlined"
+                                   Color="Color.Info" aria-label="track" OnClick="@(() => OnTrackingClick.InvokeAsync(item.Id))"></MudIconButton>
                 </span>
 
             </div>
@@ -20,9 +20,9 @@
                 <span class="task-description col-sm my-1">@item.Description</span>
                 <span class=" col-sm-4 col-xl-3 text-end my-1">
                     <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Warning"
-                                   aria-label="delete" OnClick="@(() => OnDeleteClick.InvokeAsync(item))"></MudIconButton>
+                                   aria-label="delete" OnClick="@(() => OnDeleteClick.InvokeAsync(item.Id))"></MudIconButton>
                     <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Tertiary"
-                                   aria-label="edit" OnClick="@(() => OnEditClick.InvokeAsync(item))"></MudIconButton>
+                                   aria-label="edit" OnClick="@(() => OnEditClick.InvokeAsync(item.Id))"></MudIconButton>
                 </span>
                  </div>
         </div>
@@ -35,13 +35,15 @@
     [Parameter]
     public JobModel item { get; set; }
     [Parameter]
-    public EventCallback<JobModel> OnStartDrag { get; set; }
+    public EventCallback<Guid> OnStartDrag { get; set; }
     [Parameter]
-    public EventCallback<JobModel> OnDrop { get; set; }
+    public EventCallback<Guid> OnDrop { get; set; }
     [Parameter]
-    public EventCallback<JobModel> OnDeleteClick { get; set; }
+    public EventCallback<Guid> OnDeleteClick { get; set; }
     [Parameter]
-    public EventCallback<JobModel> OnEditClick { get; set; }
+    public EventCallback<Guid> OnEditClick { get; set; }
     [Parameter]
-    public EventCallback<JobModel> OnTrackingClick { get; set; }
+    public EventCallback<Guid> OnTrackingClick { get; set; }
+    [Parameter]
+    public bool isSelected { get; set; } = false; 
 }

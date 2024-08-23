@@ -1,56 +1,12 @@
 ﻿@page "/"
-@using Recurop
-@inject RecurringOperationsManager Recurop
-@implements IDisposable
 
 <PageTitle>Flowmodoro</PageTitle>
 <MudGrid Style="width:100%;margin:0px;"  Justify="Justify.Center">
     <MudItem md="6" xs="12">
-        <div style="text-align:center;">
-            <h1>
-                <strong>Flowmodoro</strong>
-            </h1>
-
-            <p>
-                Work time is devided by 5<br />
-                Stop and Swap Mode to take a break <br />
-                If you dont want to take a break just stop and reset the timer :)
-            </p>
-
-        </div>
-        <div style="margin-top:4em; text-align:center;">
-            <h2>@TitleText</h2>
-            <div style="padding-top:15px">
-                <p style="visibility: @(_timerVisible ? "visible" : "hidden"); font-size: 75px;">@this._displayTime</p>
-                <div>
-                    <button class="btn btn-sm btn-primary" disabled=@(!StopWatchOperation.CanBeStarted || !TimerOpertation.CanBeStarted ? true : false)
-                    @onclick="StartTimer">
-                        Start
-                    </button>
-                    <button class="btn btn-sm btn-danger" disabled=@(StopWatchOperation.IsRecurring || TimerOpertation.IsRecurring ? false : true)
-                    @onclick="StopTimer">
-                        Stop
-                    </button>
-                    <button class="btn btn-sm btn-danger" disabled=@(StopWatchOperation.IsRecurring || TimerOpertation.IsRecurring ? true : false)
-                    @onclick="ResetTimer">
-                        Reset
-                    </button>
-                    <button class="btn btn-sm btn_danger" disabled=@(!CanBeSwapped())
-                    @onclick="SwapMode">
-                        SwapMode
-                    </button>
-                </div>
-            </div>
-                    @if (BlinkerOperation?.Status == RecurringOperationStatus.Executing)
-            {
-            <div>
-                <audio autoplay loop><source src="/Assets/Audio/30-seconds-alarm.mp3" /></audio>
-            </div>
-            }
-        </div>
+        <TimerComponent @bind-CurrentJob=SelectedJob></TimerComponent>
     </MudItem>
     <MudItem md="6" xs="12">
-        <DragAndDropListComponent></DragAndDropListComponent>
+        <DragAndDropListComponent JobsList="JobModelList" OnJobItemSelected="OnJobItemSelected"></DragAndDropListComponent>
     </MudItem>
 </MudGrid>
 
