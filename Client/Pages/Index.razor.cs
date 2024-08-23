@@ -192,8 +192,10 @@ namespace Flowmodoro.Client.Pages
 
         bool CanBeSwapped()
         {
-            bool isRunning = StopWatchOperation.IsRecurring && TimerOpertation.IsRecurring;
-            Console.WriteLine(!isRunning && _isInStopwatchMode);
+            bool isRunning = StopWatchOperation.IsRecurring || TimerOpertation.IsRecurring;
+            Console.WriteLine("is Running {0}", isRunning);
+            Console.WriteLine("isInStopWatchMode {0}, ", _isInStopwatchMode);
+            Console.WriteLine((!isRunning && _isInStopwatchMode) || (!isRunning && !_isInStopwatchMode && this.Seconds == 0));
             if ((!isRunning && _isInStopwatchMode) || (!isRunning && !_isInStopwatchMode && this.Seconds == 0))
                 return true;
 
