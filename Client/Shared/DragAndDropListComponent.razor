@@ -8,17 +8,20 @@
         <MudText>Add Task</MudText>
     </MudButton>
     <ul ondragover="event.preventDefault();">
-        @foreach (var item in Jobs)
+        @for(int i = 0; i <JobsList.Count(); i++)
         {
-            if (item != null)     //Change @ondrop to @ondragover to update UI in real time
+            if (JobsList[i] != null)     //Change @ondrop to @ondragover to update UI in real time
             {
-                <JobListItem item="item" 
+                
+                JobModel item = JobsList[i];
+                
+                <JobListItem item="JobsList[i]"
                     OnDrop="DropHandler" 
                     OnStartDrag="StartDragHandler" 
                     OnDeleteClick="DeleteClickHandler"
                     OnTrackingClick="TrackingClickHandler"
                     OnEditClick="EditClickHandler"
-                    ></JobListItem>
+                    isSelected="item.Id == this.selectedJobItemId"></JobListItem>
             }
             else
             {
@@ -33,25 +36,26 @@
 
     int startDragIndex;
 
-    List<JobModel> Jobs = new List<JobModel> {
-        new JobModel() { Id = Guid.NewGuid(), Name="Test1", Description="_ RRE EEieieie iaoiaoai pp pp poeuraru iaosudosiud aosifaoisfjas aslkfjalksfj alkjjskja akasljdaksf_", LastUpdated = DateTime.Now, Status = JobStatuses.Todo},
-        new JobModel() { Id = Guid.NewGuid(), Name="Test3", Description="_Three_", LastUpdated = DateTime.Now, Status = JobStatuses.Todo},
-        new JobModel() { Id = Guid.NewGuid(), Name="Test4", Description="_Four_", LastUpdated = DateTime.Now, Status = JobStatuses.Todo},
-        new JobModel() { Id = Guid.NewGuid(), Name="Test5", Description="_Five_", LastUpdated = DateTime.Now, Status = JobStatuses.Todo},
-        new JobModel() { Id = Guid.NewGuid(), Name="Test6", Description="_Six_", LastUpdated = DateTime.Now, Status = JobStatuses.Todo},
-        new JobModel() { Id = Guid.NewGuid(), Name="Test7", Description="_Seven_", LastUpdated = DateTime.Now, Status = JobStatuses.Todo},
-        new JobModel() { Id = Guid.NewGuid(), Name="Test8", Description="_Eight_", LastUpdated = DateTime.Now, Status = JobStatuses.Todo},
-        new JobModel() { Id = Guid.NewGuid(), Name="Test2", Description="_Two_", LastUpdated = DateTime.Now, Status = JobStatuses.Todo},
-    };
+    [Parameter]
+    public List<JobModel> JobsList { get; set; } 
 
-    void StartDragHandler(JobModel item)
+    [Parameter]
+    public EventCallback<Guid?> OnJobItemSelected { get; set; }
+
+    private Guid? selectedJobItemId;
+
+
+    void StartDragHandler(Guid itemId)
     {
-        startDragIndex = GetIndex(item);
-        Console.WriteLine($"DragStart for {item.Id} index {startDragIndex}");
+        JobModel? item = JobsList.Find(i => i.Id == itemId);
+        if(item != null)
+            startDragIndex = GetIndex(item);
+        Console.WriteLine($"DragStart for {item?.Id} index {startDragIndex}");
     }
 
-    void DropHandler(JobModel itemAtDropPosition)
+    void DropHandler(Guid itemAtDropPositionId)
     {
+        JobModel? itemAtDropPosition = JobsList.Find(i => i.Id == itemAtDropPositionId) ;
         if (itemAtDropPosition != null)
         {
             Console.WriteLine($"Drop item {itemAtDropPosition.Description} ({itemAtDropPosition.Id})");
@@ -61,11 +65,11 @@
             Console.WriteLine($"Drop index is {dropIndex}, move from {startDragIndex}");
 
             // get dragged item
-            var draggedItem = Jobs[startDragIndex];
+            var draggedItem = JobsList[startDragIndex];
             // remove dragged item from dragStart index
-            Jobs.RemoveAt(startDragIndex);
+            JobsList.RemoveAt(startDragIndex);
             // insert dragged item at dropIndex
-            Jobs.Insert(dropIndex, draggedItem);
+            JobsList.Insert(dropIndex, draggedItem);
 
             // update current selection
             startDragIndex = dropIndex;
@@ -80,26 +84,41 @@
 
     int GetIndex(JobModel item)
     {
-        return Jobs.FindIndex(a => a.Id == item.Id);
+        return JobsList.FindIndex(a => a.Id == item.Id);
     }
 
     void AddJob()
     {
-        int number = Jobs.Count + 1;
-        Jobs.Add(new JobModel() { Id = Guid.NewGuid(), Name = $"Test{number}", Description = $"_{number}_", LastUpdated = DateTime.Now, Status = JobStatuses.Todo });
+        int number = JobsList.Count + 1;
+        JobsList.Add(new JobModel() { Id = Guid.NewGuid(), Name = $"Test{number}", Description = $"_{number}_", LastUpdated = DateTime.Now, Status = JobStatuses.Todo });
     }       
 
-    void DeleteClickHandler(JobModel item)
+    void DeleteClickHandler(Guid itemId)
     {
-        Console.WriteLine($"DeleteHandler {item.Name}");
-    }
-    void EditClickHandler(JobModel item)
-    {
-        Console.WriteLine($"ClickHandler {item.Name}");
+        JobModel? item = JobsList.Find(i => i.Id == itemId);
+        Console.WriteLine($"DeleteHandler {item?.Name}");
 
     }
-    void TrackingClickHandler(JobModel item)
+    void EditClickHandler(Guid itemId)
     {
-        Console.WriteLine($"TrackingHandler {item.Name}");
+        JobModel? item = JobsList.Find(i => i.Id == itemId);
+        Console.WriteLine($"ClickHandler {item?.Name}");
+
+    }
+    void TrackingClickHandler(Guid itemId)
+    {
+        if(selectedJobItemId != itemId)
+        {
+            JobModel? item = JobsList.Find(i => i.Id == itemId);
+            selectedJobItemId = item?.Id;
+            Console.WriteLine($"TrackingHandler {item?.Name}");
+
+        }
+        else
+        {
+            selectedJobItemId = null;
+        }
+        var task = OnJobItemSelected.InvokeAsync(selectedJobItemId);
+        task.Wait();
     }
 }

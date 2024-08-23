@@ -18,6 +18,10 @@ div.task-formatter:hover {
     cursor: grab;
 }
 
+div.task-selected {
+    background-color: var(--mud-palette-success-darken);
+}
+
 li {
     margin: 0;
     padding: 0;
