@@ -1,0 +1,124 @@
+﻿@using Flowmodoro.Client.Models;
+
+<!-- https://stackoverflow.com/questions/59302823/blazor-re-ordering-a-list-with-drag-and-drop -->
+
+<div class="drag-drop-container">
+    <h3>DragAndDropListComponent</h3>
+    <MudButton Variant="Variant.Filled" Color="Color.Info" @onclick="AddJob">
+        <MudText>Add Task</MudText>
+    </MudButton>
+    <ul ondragover="event.preventDefault();">
+        @for(int i = 0; i <JobsList.Count(); i++)
+        {
+            if (JobsList[i] != null)     //Change @ondrop to @ondragover to update UI in real time
+            {
+                
+                JobModel item = JobsList[i];
+                
+                <JobListItem item="JobsList[i]"
+                    OnDrop="DropHandler" 
+                    OnStartDrag="StartDragHandler" 
+                    OnDeleteClick="DeleteClickHandler"
+                    OnTrackingClick="TrackingClickHandler"
+                    OnEditClick="EditClickHandler"
+                    isSelected="item.Id == this.selectedJobItemId"></JobListItem>
+            }
+            else
+            {
+                <li>No Items - Click Here To Create New Ones</li>
+            }
+        }
+    </ul>
+</div>
+@*<button @onclick="ReportList">List</button>*@
+@code
+{
+
+    int startDragIndex;
+
+    [Parameter]
+    public List<JobModel> JobsList { get; set; } 
+
+    [Parameter]
+    public EventCallback<Guid?> OnJobItemSelected { get; set; }
+
+    private Guid? selectedJobItemId;
+
+
+    void StartDragHandler(Guid itemId)
+    {
+        JobModel? item = JobsList.Find(i => i.Id == itemId);
+        if(item != null)
+            startDragIndex = GetIndex(item);
+        Console.WriteLine($"DragStart for {item?.Id} index {startDragIndex}");
+    }
+
+    void DropHandler(Guid itemAtDropPositionId)
+    {
+        JobModel? itemAtDropPosition = JobsList.Find(i => i.Id == itemAtDropPositionId) ;
+        if (itemAtDropPosition != null)
+        {
+            Console.WriteLine($"Drop item {itemAtDropPosition.Description} ({itemAtDropPosition.Id})");
+
+            var dropIndex = GetIndex(itemAtDropPosition);
+
+            Console.WriteLine($"Drop index is {dropIndex}, move from {startDragIndex}");
+
+            // get dragged item
+            var draggedItem = JobsList[startDragIndex];
+            // remove dragged item from dragStart index
+            JobsList.RemoveAt(startDragIndex);
+            // insert dragged item at dropIndex
+            JobsList.Insert(dropIndex, draggedItem);
+
+            // update current selection
+            startDragIndex = dropIndex;
+
+            StateHasChanged();
+        }
+        else
+        {
+            Console.WriteLine("Drop - null");
+        }
+    }
+
+    int GetIndex(JobModel item)
+    {
+        return JobsList.FindIndex(a => a.Id == item.Id);
+    }
+
+    void AddJob()
+    {
+        int number = JobsList.Count + 1;
+        JobsList.Add(new JobModel() { Id = Guid.NewGuid(), Name = $"Test{number}", Description = $"_{number}_", LastUpdated = DateTime.Now, Status = JobStatuses.Todo });
+    }       
+
+    void DeleteClickHandler(Guid itemId)
+    {
+        JobModel? item = JobsList.Find(i => i.Id == itemId);
+        Console.WriteLine($"DeleteHandler {item?.Name}");
+
+    }
+    void EditClickHandler(Guid itemId)
+    {
+        JobModel? item = JobsList.Find(i => i.Id == itemId);
+        Console.WriteLine($"ClickHandler {item?.Name}");
+
+    }
+    void TrackingClickHandler(Guid itemId)
+    {
+        if(selectedJobItemId != itemId)
+        {
+            JobModel? item = JobsList.Find(i => i.Id == itemId);
+            selectedJobItemId = item?.Id;
+            Console.WriteLine($"TrackingHandler {item?.Name}");
+
+        }
+        else
+        {
+            selectedJobItemId = null;
+        }
+        var task = OnJobItemSelected.InvokeAsync(selectedJobItemId);
+        task.Wait();
+    }
+}
