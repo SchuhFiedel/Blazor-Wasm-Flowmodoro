@@ -1,0 +1,19 @@
+cd /home/pi/Images
+# required packages -docker -moreutils
+
+echo "Load Image" | ts '[%Y-%m-%d %H:%M:%S]' >> BuildLogFile.txt
+sudo docker load -i ./flowmodoro.tar | ts '[%Y-%m-%d %H:%M:%S]' >> BuildLogFile.txt
+
+echo "remove container" | ts '[%Y-%m-%d %H:%M:%S]' >> BuildLogFile.txt
+sudo docker stop Flowmodoro | ts '[%Y-%m-%d %H:%M:%S]' >> BuildLogFile.txt
+sudo docker rm Flowmodoro | ts '[%Y-%m-%d %H:%M:%S]' >> BuildLogFile.txt
+
+echo "start container" | ts '[%Y-%m-%d %H:%M:%S]' >> BuildLogFile.txt
+sudo docker run -d -p 50000:80 -p 50001:443 --name Flowmodoro flowmodoro:latest | ts '[%Y-%m-%d %H:%M:%S]' >> BuildLogFile.txt
+
+echo "DONE!" | ts '[%Y-%m-%d %H:%M:%S]' >> BuildLogFile.txt
+
+#limit file size to 1KB
+tail -c 1K BuildLogFile.txt > BuildLogFile.tmp
+mv BuildLogFile.tmp BuildLogFile.txt
+rm BuildLogFile.tmp
