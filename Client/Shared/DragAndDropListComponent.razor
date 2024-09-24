@@ -14,14 +14,14 @@
             {
                 
                 JobModel item = JobsList[i];
-                
-                <JobListItem item="JobsList[i]"
+
+                <JobListItem Item="JobsList[i]"
                     OnDrop="DropHandler" 
                     OnStartDrag="StartDragHandler" 
                     OnDeleteClick="DeleteClickHandler"
                     OnTrackingClick="TrackingClickHandler"
-                    OnEditClick="EditClickHandler"
-                    isSelected="item.Id == this.selectedJobItemId"></JobListItem>
+                    OnEditClickFinished="EditClickHandler"
+                    isSelected="item.Id == this.selectedJobItemId" @ref="JobListItemRef"></JobListItem>
             }
             else
             {
@@ -44,6 +44,11 @@
 
     private Guid? selectedJobItemId;
 
+    private List<JobListItem> JobListItemList = new ();
+    JobListItem JobListItemRef
+    {
+        set { JobListItemList.Add(value);  }
+    }
 
     void StartDragHandler(Guid itemId)
     {
@@ -55,6 +60,7 @@
 
     void DropHandler(Guid itemAtDropPositionId)
     {
+
         JobModel? itemAtDropPosition = JobsList.Find(i => i.Id == itemAtDropPositionId) ;
         if (itemAtDropPosition != null)
         {
@@ -75,6 +81,12 @@
             startDragIndex = dropIndex;
 
             StateHasChanged();
+            //needed for buggy behaviour on Mobile Drag
+            JobListItemList.ForEach(x =>
+            {
+                x.dragenterCounter = 0;
+                x.isDraggedOver = false;
+            });
         }
         else
         {
@@ -96,6 +108,8 @@
     void DeleteClickHandler(Guid itemId)
     {
         JobModel? item = JobsList.Find(i => i.Id == itemId);
+        if(item != null)
+            JobsList.Remove(item);
         Console.WriteLine($"DeleteHandler {item?.Name}");
 
     }
