@@ -1,28 +1,32 @@
 ﻿
 
 <li draggable="true"
-@key="item.Id" tabindex="1"
-@ondrop="@(()=> OnDrop.InvokeAsync(item.Id))"
-@ondrag="@(()=> OnStartDrag.InvokeAsync(item.Id))">
+@key="Item.Id" tabindex="1" 
+@ondrop="@(()=> OnDropHandler(this))"
+@ondragstart="@(()=> OnDragStartHandler(this))"
+@ondragover="@(() => OnDragOverHandler(this))"
+@ondragenter="@(() => OnDragEnterHandler(this))"
+@ondragleave="@(() => OnDragLeaveHandler(this))"
+>
     <div class="task-container">
-        <div class="task-formatter rounded container @(isSelected ? "task-selected" : "")">
+        <div class="task-formatter rounded container @(isSelected ? "task-selected" : "") @(isDraggedOver ? "draggedOver" : "" )">
             <div class="row">
-                <h6 class="task-name col-sm my-1">@item.Name</h6>
+                <h6 class="task-name col-sm my-1">@Item.Name</h6>
                 <span class=" col-sm-4 col-xl-3 text-end my-1">
-                    @item.TimeWorkedOnTask
-                    <MudIconButton Icon="@Icons.Material.Sharp.AccessTime" Size="Size.Small" Variant="Variant.Outlined"
-                                   Color="Color.Info" aria-label="track" OnClick="@(() => OnTrackingClick.InvokeAsync(item.Id))"></MudIconButton>
+                    @Item.TimeWorkedOnTask
+                    <MudIconButton Icon="@Icons.Material.Sharp.AccessTime" Size="Size.Small" Variant="Variant.Filled"
+                                   Color="@ButtonColor" aria-label="track" OnClick="@(() => OnTrackingClick.InvokeAsync(Item.Id))"></MudIconButton>
                 </span>
 
             </div>
 
             <div class="row">
-                <span class="task-description col-sm my-1">@item.Description</span>
+                <span class="task-description col-sm my-1">@Item.Description</span>
                 <span class=" col-sm-4 col-xl-3 text-end my-1">
-                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Warning"
-                                   aria-label="delete" OnClick="@(() => OnDeleteClick.InvokeAsync(item.Id))"></MudIconButton>
-                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Tertiary"
-                                   aria-label="edit" OnClick="@(() => OnEditClick.InvokeAsync(item.Id))"></MudIconButton>
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Variant="Variant.Filled" Color="@ButtonColor"
+                                   aria-label="delete" OnClick="@(() => OnDeleteClick.InvokeAsync(Item.Id))"></MudIconButton>
+                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" Variant="Variant.Filled" Color="@ButtonColor"
+                                   aria-label="edit" OnClick="@(() => OnEditClickHandler())"></MudIconButton>
                 </span>
                  </div>
         </div>
@@ -33,7 +37,7 @@
 @code{
 
     [Parameter]
-    public JobModel item { get; set; }
+    public JobModel Item { get; set; }
     [Parameter]
     public EventCallback<Guid> OnStartDrag { get; set; }
     [Parameter]
@@ -41,9 +45,67 @@
     [Parameter]
     public EventCallback<Guid> OnDeleteClick { get; set; }
     [Parameter]
-    public EventCallback<Guid> OnEditClick { get; set; }
+    public EventCallback<Guid> OnEditClickFinished { get; set; }
     [Parameter]
     public EventCallback<Guid> OnTrackingClick { get; set; }
     [Parameter]
-    public bool isSelected { get; set; } = false;   
+    public bool isSelected { get; set; } = false;
+
+
+    bool isInEditMode = false;
+    public bool isDraggedOver = false;
+    Color ButtonColor = Color.Inherit;
+    public int dragenterCounter = 0;
+    string Cursor = "pointer";
+
+    private void OnEditClickHandler()
+    {
+        Console.WriteLine(nameof(OnEditClickHandler));
+        this.OnEditClickFinished.InvokeAsync(Item.Id);
+    }
+
+    private void OnDragEnterHandler(JobListItem item)
+    {
+        Console.WriteLine(nameof(OnDragEnterHandler) + " " + item.Item.Name + " " + item.isDraggedOver);
+        dragenterCounter++;
+        if (item.isDraggedOver != true)
+        {
+            item.isDraggedOver = true;
+            StateHasChanged();
+        }
+    }
+
+    private void OnDragLeaveHandler(JobListItem item)
+    {
+        Console.WriteLine(nameof(OnDragLeaveHandler) + " " + item.Item.Name + " " + item.isDraggedOver);
+        dragenterCounter--;
+        if (item.isDraggedOver != false && dragenterCounter == 0)
+        {
+            item.isDraggedOver = false;
+            StateHasChanged();
+        }
+
+    }
+
+    private void OnDragOverHandler(JobListItem item)
+    {
+        if (item.isDraggedOver != true)
+        {
+            Console.WriteLine(nameof(OnDragOverHandler) + " " + item.Item.Name + " " + item.isDraggedOver);
+            item.isDraggedOver = true;
+            StateHasChanged();
+        }
+    }
+
+    private void OnDropHandler(JobListItem item)
+    {
+        item.isDraggedOver = false;
+        this.dragenterCounter = 0;
+        OnDrop.InvokeAsync(Item.Id);
+    }
+
+    private void OnDragStartHandler(JobListItem item)
+    {
+        OnStartDrag.InvokeAsync(Item.Id); 
+    }
 }

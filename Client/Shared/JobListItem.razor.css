@@ -1,6 +1,7 @@
 ﻿
 .task-container {
     padding-top: 0.5em;
+    touch-action: none;
 }
 
 .task-formatter {
@@ -18,7 +19,17 @@ div.task-formatter:hover {
     cursor: grab;
 }
 
+.draggedOver{
+    border: 4px dashed black;
+}
+
+div.task-selected:hover {
+    background-color: var(--mud-palette-success);
+    /*background-color: color-mix(in srgb, var(--mud-palette-success-darken), var(--mud-palette-overlay-dark) 10%);*/
+}
+
 div.task-selected {
+    background-color: color-mix(in srgb, var(--mud-palette-success-darken), var(--mud-palette-overlay-dark) 10%);
     background-color: var(--mud-palette-success-darken);
 }
 
