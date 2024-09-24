@@ -4,9 +4,25 @@
     touch-action: none;
 }
 
+.task-name {
+    display: inline;
+    max-width: 70%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.task-description {
+    display: inline;
+    max-width: 70%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: pre-wrap;
+}
+
 .task-formatter {
     background-color: var(--mud-palette-primary);
-    color:white;
+    color: white;
     padding-right: 0.5em;
     padding-left: 0.5em;
     padding-bottom: 0.2em;
@@ -37,3 +53,5 @@ li {
     margin: 0;
     padding: 0;
 }
+
+

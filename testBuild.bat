@@ -1,6 +1,9 @@
 @echo on 
 echo "1/4 --- Build and create Image"
 CALL docker build -t  flowmodoro:latest .
+
+if %errorlevel% neq 0 exit /b %errorlevel%
+
 CALL docker save -o ./Server/bin/flowmodoro.tar flowmodoro:latest
 
 echo "2/4 --- Copy to test environment"

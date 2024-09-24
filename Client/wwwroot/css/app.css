@@ -129,3 +129,9 @@ a, .btn-link {
         color: #c4cbd4;
         font-size: 11px;
     }
+
+
+.task-container .mud-shrink ~ label.mud-input-label.mud-input-label-inputcontrol,
+.task-container .mud-input-control > .mud-input-control-input-container > .mud-input-label-inputcontrol {
+    color: white !important;
+}
