@@ -2,33 +2,35 @@
 
 <!-- https://stackoverflow.com/questions/59302823/blazor-re-ordering-a-list-with-drag-and-drop -->
 
-<div class="drag-drop-container">
-    <h3>DragAndDropListComponent</h3>
-    <MudButton Variant="Variant.Filled" Color="Color.Info" @onclick="AddJob">
-        <MudText>Add Task</MudText>
-    </MudButton>
-    <ul ondragover="event.preventDefault();">
-        @for(int i = 0; i <JobsList.Count(); i++)
-        {
-            if (JobsList[i] != null)     //Change @ondrop to @ondragover to update UI in real time
+<div class="drag-drop-container" >
+    <h3>Tasks</h3>
+    <div style="text-align:left;">
+        <MudButton Variant="Variant.Filled" Color="Color.Info" @onclick="AddJob">
+            <MudText>Add Task</MudText>
+        </MudButton>
+        <ul ondragover="event.preventDefault();">
+            @for (int i = 0; i < JobsList.Count(); i++)
             {
-                
-                JobModel item = JobsList[i];
+                if (JobsList[i] != null)     //Change @ondrop to @ondragover to update UI in real time
+                {
 
-                <JobListItem Item="JobsList[i]"
-                    OnDrop="DropHandler" 
-                    OnStartDrag="StartDragHandler" 
-                    OnDeleteClick="DeleteClickHandler"
-                    OnTrackingClick="TrackingClickHandler"
-                    OnEditClickFinished="EditClickHandler"
-                    isSelected="item.Id == this.selectedJobItemId" @ref="JobListItemRef"></JobListItem>
+                    JobModel item = JobsList[i];
+
+                    <JobListItem Item="JobsList[i]"
+                                 OnDrop="DropHandler"
+                                 OnStartDrag="StartDragHandler"
+                                 OnDeleteClick="DeleteClickHandler"
+                                 OnTrackingClick="TrackingClickHandler"
+                                 OnEditClickFinished="EditClickHandler"
+                                 isSelected="item.Id == this.selectedJobItemId" @ref="JobListItemRef"></JobListItem>
+                }
+                else
+                {
+                    <li>No Items - Click Here To Create New Ones</li>
+                }
             }
-            else
-            {
-                <li>No Items - Click Here To Create New Ones</li>
-            }
-        }
-    </ul>
+        </ul>
+    </div>
 </div>
 @*<button @onclick="ReportList">List</button>*@
 @code
@@ -52,6 +54,7 @@
 
     void StartDragHandler(Guid itemId)
     {
+        JobListItemList.ForEach(x => x.isInEditMode = false);
         JobModel? item = JobsList.Find(i => i.Id == itemId);
         if(item != null)
             startDragIndex = GetIndex(item);
@@ -102,7 +105,7 @@
     void AddJob()
     {
         int number = JobsList.Count + 1;
-        JobsList.Add(new JobModel() { Id = Guid.NewGuid(), Name = $"Test{number}", Description = $"_{number}_", LastUpdated = DateTime.Now, Status = JobStatuses.Todo });
+        JobsList.Add(new JobModel() { Id = Guid.NewGuid(), Name = $"Task{number}", Description = $"Task{number}", LastUpdated = DateTime.Now, Status = JobStatuses.Todo });
     }       
 
     void DeleteClickHandler(Guid itemId)

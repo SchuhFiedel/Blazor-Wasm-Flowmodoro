@@ -1,6 +1,6 @@
 ﻿
 
-<li draggable="true"
+<li draggable="@(isInEditMode == false ? "true" : "")"
 @key="Item.Id" tabindex="1" 
 @ondrop="@(()=> OnDropHandler(this))"
 @ondragstart="@(()=> OnDragStartHandler(this))"
@@ -10,25 +10,56 @@
 >
     <div class="task-container">
         <div class="task-formatter rounded container @(isSelected ? "task-selected" : "") @(isDraggedOver ? "draggedOver" : "" )">
-            <div class="row">
-                <h6 class="task-name col-sm my-1">@Item.Name</h6>
-                <span class=" col-sm-4 col-xl-3 text-end my-1">
-                    @Item.TimeWorkedOnTask
-                    <MudIconButton Icon="@Icons.Material.Sharp.AccessTime" Size="Size.Small" Variant="Variant.Filled"
-                                   Color="@ButtonColor" aria-label="track" OnClick="@(() => OnTrackingClick.InvokeAsync(Item.Id))"></MudIconButton>
-                </span>
+            @if (isInEditMode == false)
+            {
+                <div class="row">
+                    <h6 class="task-name col-sm my-1">@Item.Name</h6>
+                    <span class=" col-sm-4 col-xl-3 text-end my-1">
+                        @Item.TimeWorkedOnTask
+                        <MudIconButton Icon="@Icons.Material.Sharp.AccessTime" Size="Size.Small" Variant="Variant.Filled"
+                                       Color="@ButtonColor" aria-label="track" OnClick="@(() => OnTrackingClick.InvokeAsync(Item.Id))"></MudIconButton>
+                    </span>
 
-            </div>
+                </div>
 
-            <div class="row">
-                <span class="task-description col-sm my-1">@Item.Description</span>
-                <span class=" col-sm-4 col-xl-3 text-end my-1">
-                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Variant="Variant.Filled" Color="@ButtonColor"
-                                   aria-label="delete" OnClick="@(() => OnDeleteClick.InvokeAsync(Item.Id))"></MudIconButton>
-                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" Variant="Variant.Filled" Color="@ButtonColor"
-                                   aria-label="edit" OnClick="@(() => OnEditClickHandler())"></MudIconButton>
-                </span>
-                 </div>
+                <div class="row">
+                    <span class="task-description col-sm my-1" >@Item.Description</span>
+                    <span class=" col-sm-4 col-xl-3 text-end my-1">
+                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Variant="Variant.Filled" Color="@ButtonColor"
+                                       aria-label="delete" OnClick="@(() => OnDeleteClick.InvokeAsync(Item.Id))"></MudIconButton>
+                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" Variant="Variant.Filled" Color="@ButtonColor"
+                                       aria-label="edit" OnClick="@(() => OnEditClickHandler())"></MudIconButton>
+                    </span>
+                </div>
+            }
+            else{
+                <div class="row">
+                    <h6 class="task-name col-sm my-1">
+                        <MudTextField @bind-Value="@Item.Name" Label="Name" Variant="Variant.Text"
+                                      Style="color:white" Clearable="true" DebounceInterval="500"></MudTextField>
+                    </h6>
+                    <span class=" col-sm-4 col-xl-3 text-end my-1">
+                        @Item.TimeWorkedOnTask
+                        <MudIconButton Icon="@Icons.Material.Sharp.AccessTime" Size="Size.Small" Variant="Variant.Filled"
+                                       Color="@ButtonColor" aria-label="track" OnClick="@(() => OnTrackingClick.InvokeAsync(Item.Id))"></MudIconButton>
+                    </span>
+
+                </div>
+
+                <div class="row">
+                    <span class="task-description col-sm my-1">
+                        <MudTextField @bind-Value="@Item.Description" Label="Description" Lines="3"
+                            Clearable="true" Variant="Variant.Text" Style="color:white" DebounceInterval="500" AutoGrow>
+                        </MudTextField>
+                    </span>
+                    <span class=" col-sm-4 col-xl-3 text-end my-1">
+                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Variant="Variant.Filled" Color="@ButtonColor"
+                                       aria-label="delete" OnClick="@(() => OnDeleteClick.InvokeAsync(Item.Id))"></MudIconButton>
+                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" Variant="Variant.Filled" Color="@ButtonColor"
+                                       aria-label="edit" OnClick="@(() => OnEditClickHandler())"></MudIconButton>
+                    </span>
+                </div>  
+            }
         </div>
     </div>
 </li>
@@ -52,7 +83,7 @@
     public bool isSelected { get; set; } = false;
 
 
-    bool isInEditMode = false;
+    public bool isInEditMode = false;
     public bool isDraggedOver = false;
     Color ButtonColor = Color.Inherit;
     public int dragenterCounter = 0;
@@ -60,8 +91,9 @@
 
     private void OnEditClickHandler()
     {
+        isInEditMode = !isInEditMode;
         Console.WriteLine(nameof(OnEditClickHandler));
-        this.OnEditClickFinished.InvokeAsync(Item.Id);
+        //this.OnEditClickFinished.InvokeAsync(Item.Id);
     }
 
     private void OnDragEnterHandler(JobListItem item)

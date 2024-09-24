@@ -1,6 +1,20 @@
 ﻿@page "/"
 
 <PageTitle>Flowmodoro</PageTitle>
+
+<div style="text-align:center;padding-top:2rem;">
+    <h1>
+        <strong>Flowmodoro</strong>
+    </h1>
+
+    <p>
+        Work time is devided by 5<br />
+        Stop and Swap Mode to take a break <br />
+        If you dont want to take a break just stop and reset the timer :)
+    </p>
+
+</div>
+
 <MudGrid Style="width:100%;margin:0px;"  Justify="Justify.Center">
     <MudItem md="6" xs="12">
         <TimerComponent @bind-CurrentJob=SelectedJob></TimerComponent>
