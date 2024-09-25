@@ -66,9 +66,8 @@
 
 
 @code{
-
     [Parameter]
-    public JobModel Item { get; set; }
+    public JobModel Item { get; set; } = new();
     [Parameter]
     public EventCallback<Guid> OnStartDrag { get; set; }
     [Parameter]
@@ -87,7 +86,6 @@
     public bool isDraggedOver = false;
     Color ButtonColor = Color.Inherit;
     public int dragenterCounter = 0;
-    string Cursor = "pointer";
 
     private void OnEditClickHandler()
     {

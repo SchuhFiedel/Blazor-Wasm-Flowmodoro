@@ -10,9 +10,9 @@ namespace Flowmodoro.Client.Shared
         const string StopWatchText = "Work Mode";
         const string TimerText = "Break Mode";
 
-        public RecurringOperation? TimerOpertation { get; private set; }
-        public RecurringOperation? BlinkerOperation { get; private set; }
-        public RecurringOperation? StopWatchOperation { get; private set; }
+        public RecurringOperation TimerOpertation { get; private set; } = null!;
+        public RecurringOperation BlinkerOperation { get; private set; } = null!;
+        public RecurringOperation StopWatchOperation { get; private set; } = null!;
         TimeSpan _displayTime = default;
         List<TimeSpan>? _laptimes;
         public int Seconds { get; private set; }
@@ -26,7 +26,7 @@ namespace Flowmodoro.Client.Shared
         protected IToastComponent ToastComponent { get; set; } = null!;
 
         [Inject]
-        public RecurringOperationsManager Recurop { get; init; }
+        public RecurringOperationsManager Recurop { get; init; } = null!;
 
         [Parameter]
         public JobModel? CurrentJob { get; set; }
