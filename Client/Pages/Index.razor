@@ -20,9 +20,8 @@
         <TimerComponent @bind-CurrentJob=SelectedJob></TimerComponent>
     </MudItem>
     <MudItem md="6" xs="12">
-        <DragAndDropListComponent JobsList="JobModelList" OnJobItemSelected="OnJobItemSelected"></DragAndDropListComponent>
+        <DragAndDropListComponent JobsList="JobModelList" OnJobItemSelected="OnJobItemSelected" @ref="DragDropListCompRef"></DragAndDropListComponent>
     </MudItem>
 </MudGrid>
-
 
 
