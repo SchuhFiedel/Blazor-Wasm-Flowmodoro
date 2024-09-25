@@ -17,6 +17,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.21" PrivateAssets="all" />
     <PackageReference Include="MudBlazor" Version="6.21.0" />
     <PackageReference Include="Recurop" Version="1.1.0" />
+    <PackageReference Include="Toolbelt.Blazor.PWA.Updater" Version="2.1.0.1" />
   </ItemGroup>
 
   <ItemGroup>

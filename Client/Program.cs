@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor;
 using MudBlazor.Services;
 using Recurop;
+using Toolbelt.Blazor.Extensions.DependencyInjection;
 
 namespace Flowmodoro.Client
 {
@@ -33,6 +34,8 @@ namespace Flowmodoro.Client
                 config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
                 config.SnackbarConfiguration.MaxDisplayedSnackbars = 10;
             });
+
+            builder.Services.AddPWAUpdater();
 
             builder.Services.AddRecurop();
 
