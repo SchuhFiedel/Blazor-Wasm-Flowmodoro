@@ -14,8 +14,12 @@
         <CascadingValue Value="this" Name="ErrorComponent">
             @Body
         </CascadingValue>
+        <div class="footer">
+            <div>
+                @AppVersion|@Environment.Version
+            </div>
+        </div>
     </MudMainContent>
-    <div class="footer">v @AppVersion |@Environment.Version|</div>
 </MudLayout>
 
 @code{
@@ -25,7 +29,7 @@
         get
         {
             Version version = Assembly.GetEntryAssembly()!.GetName()!.Version!;
-            return $"M{version.Major}.m{version.Minor}.b{version.Build}.r{version.Revision}";
+            return $"v{version.Major}m{version.Minor}b{version.Build}r{version.Revision}";
         }
     }
 
