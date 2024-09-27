@@ -1,11 +1,21 @@
 ﻿.timer {
     text-align: center;
     margin: auto;
-    padding: 3em;
+    padding-bottom: 3em;
+    padding-top:3em;
     max-width: 50em;
     /*border: 1px solid black;*/
     height: 100%;
     background-color: lightgray;
     border-radius: 1em;
     box-shadow: grey 0.2em 0.2em;
+}
+
+/*https://stackoverflow.com/questions/30693928/how-to-make-font-size-relative-to-parent-div*/
+.timer-counter-text {
+    font-size: calc(19cqw + 1em);
+}
+
+.timer-counter-container {
+    container-type: inline-size;
 }
