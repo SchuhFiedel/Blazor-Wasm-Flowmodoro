@@ -79,3 +79,10 @@ main {
         padding-right: 1.5rem !important;
     }
 }
+
+.footer {
+    position: sticky;
+    bottom: 0;
+    padding: 1rem 1rem 1rem 2rem;
+}
+

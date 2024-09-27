@@ -1,4 +1,5 @@
-﻿@inherits LayoutComponentBase;
+﻿@using System.Reflection;
+@inherits LayoutComponentBase;
 @implements IToastComponent;
 @inject ISnackbar SnackbarService;
 
@@ -14,9 +15,19 @@
             @Body
         </CascadingValue>
     </MudMainContent>
+    <div class="footer">v @AppVersion |@Environment.Version|</div>
 </MudLayout>
 
 @code{
+
+    private string AppVersion
+    {
+        get
+        {
+            Version version = Assembly.GetEntryAssembly()!.GetName()!.Version!;
+            return $"M{version.Major}.m{version.Minor}.b{version.Build}.r{version.Revision}";
+        }
+    }
 
     public void ShowError(string title, string message = "")
     {
