@@ -5,7 +5,10 @@
     <p style="white-space: pre-wrap">@(string.IsNullOrEmpty(SubtitleText) ? " " : SubtitleText)</p>
     
     <div >
-        <p style="visibility: @(_timerVisible ? "visible" : "hidden"); font-size: 75px;">@this._displayTime</p>
+        <div class="timer-counter-container">
+            <p1 class="timer-counter-text" style="visibility: @(_timerVisible ? "visible" : "hidden");">@this._displayTime</p1>
+        </div>
+        
         <div>
             <button class="btn btn-sm btn-primary" disabled=@(!StopWatchOperation.CanBeStarted || !TimerOpertation.CanBeStarted ? true : false)
             @onclick="StartTimer">
