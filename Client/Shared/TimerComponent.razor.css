@@ -13,7 +13,8 @@
 
 /*https://stackoverflow.com/questions/30693928/how-to-make-font-size-relative-to-parent-div*/
 .timer-counter-text {
-    font-size: calc(19cqw + 1em);
+    font-size: min(calc(19cqw + 1em), 100px);
+
 }
 
 .timer-counter-container {
